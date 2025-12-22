@@ -3,47 +3,86 @@
 
 // Global variables
 int[] primes;
+float prevMouseX, prevMouseY;
 
-// Temporary test code for Task 2.1 and 2.2
+// Temporary test code for Task 3.1
 void setup() {
   size(400, 400);
 
-  // === Task 2.1: PrimeGenerator Test ===
-  println("=== Task 2.1: PrimeGenerator Test ===");
-  generatePrimes(100);
-  println("Number of primes up to 100: " + primes.length);
-  println("Expected: 25 primes");
-  println("Result: " + (primes.length == 25 ? "OK" : "NG"));
+  // === Task 3.1: InputHandler Test ===
+  println("=== Task 3.1: InputHandler Test ===");
   println();
 
-  // === Task 2.2: SpiralCalculator Test ===
-  println("=== Task 2.2: SpiralCalculator Test ===");
-
-  // Set scale: rMax = 200 (half of 400), N = 100
-  setScale(200, 100);
-  println("spiralScale = " + spiralScale);
-  println("Expected: 200 / sqrt(100) = 20.0");
+  // Test 1: Zoom constants and initial value
+  println("Test 1: Zoom constants");
+  println("MIN_ZOOM = " + MIN_ZOOM + " (expected: 0.1)");
+  println("MAX_ZOOM = " + MAX_ZOOM + " (expected: 10.0)");
+  println("ZOOM_STEP = " + ZOOM_STEP + " (expected: 1.15)");
+  println("currentZoom = " + currentZoom + " (expected: 1.0)");
   println();
 
-  // Calculate positions for n = 1 to 10
-  println("Positions for n = 1 to 10:");
-  println("n\tt\ttheta\t\tx\t\ty");
-  println("---------------------------------------------------");
-
-  for (int n = 1; n <= 10; n++) {
-    PVector pos = calculateBasePosition(n);
-    float t = sqrt(n);
-    float theta = TWO_PI * t;
-
-    // Format output
-    println(n + "\t" +
-            nf(t, 1, 3) + "\t" +
-            nf(theta, 1, 3) + "\t\t" +
-            nf(pos.x, 1, 3) + "\t\t" +
-            nf(pos.y, 1, 3));
-  }
-
+  // Test 2: handleMouseWheel - zoom in
+  println("Test 2: Zoom in (negative delta)");
+  float beforeZoom = currentZoom;
+  handleMouseWheel(-1);
+  println("Before: " + beforeZoom + " -> After: " + currentZoom);
+  println("Expected: " + (beforeZoom * ZOOM_STEP));
   println();
+
+  // Test 3: handleMouseWheel - zoom out
+  println("Test 3: Zoom out (positive delta)");
+  beforeZoom = currentZoom;
+  handleMouseWheel(1);
+  println("Before: " + beforeZoom + " -> After: " + currentZoom);
+  println("Expected: " + (beforeZoom / ZOOM_STEP));
+  println();
+
+  // Test 4: Zoom clamping - try to exceed MAX_ZOOM
+  println("Test 4: Zoom clamping (MAX_ZOOM)");
+  currentZoom = 9.5;
+  handleMouseWheel(-1);
+  println("After zoom in from 9.5: " + currentZoom);
+  println("Expected: clamped to " + MAX_ZOOM);
+  println();
+
+  // Test 5: Zoom clamping - try to go below MIN_ZOOM
+  println("Test 5: Zoom clamping (MIN_ZOOM)");
+  currentZoom = 0.15;
+  handleMouseWheel(1);
+  println("After zoom out from 0.15: " + currentZoom);
+  println("Expected: clamped to " + MIN_ZOOM);
+  println();
+
+  // Reset zoom for next tests
+  currentZoom = 1.0;
+
+  // Test 6: worldToScreen conversion
+  println("Test 6: worldToScreen conversion");
+  PVector worldPos = new PVector(100, 50);
+  PVector screenPos = worldToScreen(worldPos);
+  println("World: (" + worldPos.x + ", " + worldPos.y + ")");
+  println("Screen: (" + screenPos.x + ", " + screenPos.y + ")");
+  println("Expected: (" + (100 * 1.0 + 200) + ", " + (50 * 1.0 + 200) + ")");
+  println();
+
+  // Test 7: worldToScreen with zoom
+  println("Test 7: worldToScreen with zoom = 2.0");
+  currentZoom = 2.0;
+  screenPos = worldToScreen(worldPos);
+  println("World: (" + worldPos.x + ", " + worldPos.y + ")");
+  println("Screen: (" + screenPos.x + ", " + screenPos.y + ")");
+  println("Expected: (" + (100 * 2.0 + 200) + ", " + (50 * 2.0 + 200) + ")");
+  println();
+
+  // Test 8: calculateVelocity
+  println("Test 8: calculateVelocity");
+  prevMouseX = 0;
+  prevMouseY = 0;
+  // Simulate mouse at (30, 40) - distance should be 50
+  // Note: Can't directly test without actual mouse, but function is ready
+  println("Function implemented. Will be tested during mouse interaction.");
+  println();
+
   println("=== End of Test ===");
 }
 
