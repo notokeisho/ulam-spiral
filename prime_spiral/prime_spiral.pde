@@ -106,7 +106,7 @@ void mouseDragged() {
 
 // Handle mouse press event
 void mousePressed() {
-  if (mouseButton == RIGHT) {
+  if (mouseButton == CENTER) {
     addTwist();
   }
 }
