@@ -13,10 +13,10 @@ void setScale(float rMax, int N) {
 
 // Calculate the base position for integer n on the spiral
 // Returns: PVector with (x, y) coordinates
+// Uses 3Blue1Brown style: theta = n radians, r = scale * sqrt(n)
 PVector calculateBasePosition(int n) {
-  float t = sqrt(n);
-  float theta = TWO_PI * t;
-  float r = spiralScale * t;
+  float theta = n;  // n radians (3Blue1Brown style)
+  float r = spiralScale * sqrt(n);
 
   float x = r * cos(theta);
   float y = r * sin(theta);

@@ -7,7 +7,7 @@
 int[] primes;
 
 // Maximum integer to display
-int N = 50000;
+int N = 500000;
 
 // Time management
 int lastMillis;
@@ -29,6 +29,9 @@ void setup() {
 
   // Set spiral scale (rMax = half of width)
   setScale(width / 2, N);
+
+  // Set max radius for gradient effect
+  maxRadius = width / 2;
 
   // Note: prevMouseX/Y are not initialized here
   // They will be set on first drag using isFirstDrag flag
