@@ -47,3 +47,62 @@ void decayHeat(float dt) {
     heat = 0.0;
   }
 }
+
+// === Warp transformation functions ===
+
+// Apply twist rotation based on distance from center
+// pos: position in world coordinates
+// twistCount: number of twist operations applied
+// Returns: new position with twist applied
+PVector applyTwist(PVector pos, int twistCount) {
+  if (twistCount == 0) {
+    return pos.copy();
+  }
+
+  float distance = pos.mag();  // Distance from center
+
+  // Rotation amount proportional to distance
+  float rotation = TWIST_STRENGTH * distance * twistCount;
+
+  // Apply rotation matrix
+  float newX = pos.x * cos(rotation) - pos.y * sin(rotation);
+  float newY = pos.x * sin(rotation) + pos.y * cos(rotation);
+
+  return new PVector(newX, newY);
+}
+
+// Apply noise-based warp displacement
+// pos: position in world coordinates
+// screenX, screenY: position in screen coordinates (for distance calculation)
+// mX, mY: mouse position in screen coordinates
+// h: current heat value
+// Returns: new position with noise warp applied
+PVector applyNoiseWarp(PVector pos, float screenX, float screenY,
+                       float mX, float mY, float h) {
+  if (h <= 0) {
+    return pos.copy();
+  }
+
+  // Calculate distance from mouse in screen coordinates
+  float screenDist = dist(screenX, screenY, mX, mY);
+
+  // Gaussian attenuation based on distance
+  float influence = exp(-screenDist * screenDist / (2 * SIGMA * SIGMA));
+
+  // Displacement magnitude
+  float displacement = MAX_DISPLACEMENT * h * influence;
+
+  // Use Perlin noise to determine warp direction (static: position only)
+  float angle = noise(pos.x * NOISE_SCALE, pos.y * NOISE_SCALE) * TWO_PI;
+
+  // Apply displacement
+  float dx = cos(angle) * displacement;
+  float dy = sin(angle) * displacement;
+
+  return new PVector(pos.x + dx, pos.y + dy);
+}
+
+// Increment twist count (called on right click)
+void addTwist() {
+  twistCount++;
+}
