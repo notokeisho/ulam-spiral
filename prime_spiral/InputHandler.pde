@@ -2,12 +2,12 @@
 // Handles mouse input, zoom, and coordinate conversion
 
 // Zoom constants
-final float MIN_ZOOM = 0.1;
-final float MAX_ZOOM = 10.0;
+final float MIN_ZOOM = 0.01;
+final float MAX_ZOOM = 20.0;
 final float ZOOM_STEP = 1.03;  // Very slow zoom (3% per wheel click)
 
 // Zoom state
-float currentZoom = MAX_ZOOM;  // Start at maximum zoom (10.0)
+float currentZoom = MAX_ZOOM;  // Start at maximum zoom (20.0)
 
 // Calculate mouse velocity from previous position
 // Returns velocity magnitude in pixels per second

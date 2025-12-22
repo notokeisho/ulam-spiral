@@ -5,10 +5,9 @@
 float spiralScale;
 
 // Set the scale coefficient
-// rMax: maximum radius (typically width/2)
-// N: maximum integer to display
+// Fixed scale for consistent point spacing regardless of N
 void setScale(float rMax, int N) {
-  spiralScale = rMax / sqrt(N);
+  spiralScale = 1.0;  // Fixed scale (points don't get cramped as N increases)
 }
 
 // Calculate the base position for integer n on the spiral
