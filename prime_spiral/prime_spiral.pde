@@ -7,7 +7,7 @@
 int[] primes;
 
 // Maximum integer to display
-int N = 500000;
+int N = 2000000;
 
 // Time management
 int lastMillis;
