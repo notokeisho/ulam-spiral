@@ -77,3 +77,39 @@ void draw() {
     drawPoint(p);
   }
 }
+
+// === Event handlers ===
+
+// Handle mouse drag event
+void mouseDragged() {
+  if (mouseButton == LEFT) {
+    // First drag: initialize previous mouse position
+    if (isFirstDrag) {
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+      isFirstDrag = false;
+      return;
+    }
+
+    // Calculate velocity and update heat
+    float velocity = calculateVelocity(dt);
+    updateHeat(velocity, dt);
+
+    // Update previous mouse position
+    prevMouseX = mouseX;
+    prevMouseY = mouseY;
+  }
+}
+
+// Handle mouse press event
+void mousePressed() {
+  if (mouseButton == RIGHT) {
+    addTwist();
+  }
+}
+
+// Handle mouse wheel event
+void mouseWheel(MouseEvent event) {
+  float delta = event.getCount();
+  handleMouseWheel(delta);
+}
