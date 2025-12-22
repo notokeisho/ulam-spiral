@@ -122,4 +122,10 @@ void keyPressed() {
   if (key == ' ') {
     use3Blue1Brown = !use3Blue1Brown;
   }
+  if (key == 'r' || key == 'R') {
+    // Reset state (except zoom)
+    twistCount = 0;
+    heat = 0.0;
+    use3Blue1Brown = true;
+  }
 }
