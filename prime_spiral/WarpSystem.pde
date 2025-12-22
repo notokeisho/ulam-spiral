@@ -115,7 +115,9 @@ final int EXPLOSION_ACTIVE = 1;
 final int EXPLOSION_REPAIRING = 2;
 
 // Explosion parameters
-final float EXPLOSION_EXPAND_RATE = 100.0;             // Range expansion speed (pixels/sec)
+final float EXPLOSION_EXPAND_RATE_NORMAL = 100.0;     // Normal expansion speed
+final float EXPLOSION_EXPAND_RATE_FAST = 100000.0;    // Fast expansion speed
+float explosionExpandRate = EXPLOSION_EXPAND_RATE_NORMAL;  // Current speed
 // Explosion strength range (interpolated based on zoom)
 final float EXPLOSION_STRENGTH_MIN = 10.0;           // Strength at max zoom-in
 final float EXPLOSION_STRENGTH_MAX = 200.0;          // Strength at max zoom-out
@@ -185,6 +187,16 @@ void resetExplosion() {
   }
   explosionTime = 0;
   explosionRadius = 0;
+  explosionExpandRate = EXPLOSION_EXPAND_RATE_NORMAL;
+}
+
+// Toggle explosion speed between normal and fast
+void toggleExplosionSpeed() {
+  if (explosionExpandRate == EXPLOSION_EXPAND_RATE_NORMAL) {
+    explosionExpandRate = EXPLOSION_EXPAND_RATE_FAST;
+  } else {
+    explosionExpandRate = EXPLOSION_EXPAND_RATE_NORMAL;
+  }
 }
 
 // Update explosion state each frame
@@ -196,7 +208,7 @@ void updateExplosion(float dt) {
   if (explosionState == EXPLOSION_ACTIVE) {
     // Update time and radius (speed increases when zoomed out)
     explosionTime += dt;
-    explosionRadius = explosionTime * EXPLOSION_EXPAND_RATE * pow(MAX_ZOOM / currentZoom, ZOOM_SPEED_EXPONENT);
+    explosionRadius = explosionTime * explosionExpandRate * pow(MAX_ZOOM / currentZoom, ZOOM_SPEED_EXPONENT);
 
     // Update explosion center to mouse position (converted to world coordinates)
     explosionCenter.set(

@@ -154,4 +154,7 @@ void keyPressed() {
     use3Blue1Brown = true;
     resetExplosion();
   }
+  if (key == 'f' || key == 'F') {
+    toggleExplosionSpeed();
+  }
 }
