@@ -5,7 +5,7 @@
 color BG_COLOR = color(0);           // Black background
 color CENTER_COLOR = color(0, 255, 255);  // Bright cyan at center
 color EDGE_COLOR = color(200, 200, 220);  // Light grayish-white at edges
-float POINT_SIZE = 1.2;              // Point diameter
+float POINT_SIZE = 1.4;              // Point diameter
 
 // Maximum radius for gradient calculation (will be set in setup)
 float maxRadius = 3000;
