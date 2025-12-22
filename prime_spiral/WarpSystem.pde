@@ -23,3 +23,27 @@ final float NOISE_SCALE = 0.03;
 
 // Twist rotation strength per twist count
 final float TWIST_STRENGTH = 0.1;
+
+// === Heat processing functions ===
+
+// Update heat based on mouse velocity
+// velocity: mouse speed in pixels per second
+// dt: delta time in seconds
+void updateHeat(float velocity, float dt) {
+  heat += K_HEAT * velocity * dt;
+
+  // Clamp heat to maximum of 1.0
+  heat = constrain(heat, 0.0, 1.0);
+}
+
+// Decay heat exponentially over time
+// dt: delta time in seconds
+void decayHeat(float dt) {
+  // Exponential decay: heat = heat * e^(-dt/TAU_HEAT)
+  heat *= exp(-dt / TAU_HEAT);
+
+  // Set to zero if very small to avoid floating point issues
+  if (heat < 0.001) {
+    heat = 0.0;
+  }
+}
