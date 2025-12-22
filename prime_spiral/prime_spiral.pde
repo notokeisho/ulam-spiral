@@ -116,3 +116,10 @@ void mouseWheel(MouseEvent event) {
   float delta = event.getCount();
   handleMouseWheel(delta);
 }
+
+// Handle key press event
+void keyPressed() {
+  if (key == ' ') {
+    use3Blue1Brown = !use3Blue1Brown;
+  }
+}
