@@ -102,7 +102,150 @@ PVector applyNoiseWarp(PVector pos, float screenX, float screenY,
   return new PVector(pos.x + dx, pos.y + dy);
 }
 
-// Increment twist count (called on right click)
+// Increment twist count (called on mouse wheel click)
 void addTwist() {
   twistCount++;
+}
+
+// === Explosion system ===
+
+// Explosion state constants
+final int EXPLOSION_IDLE = 0;
+final int EXPLOSION_ACTIVE = 1;
+final int EXPLOSION_REPAIRING = 2;
+
+// Explosion parameters
+final float EXPLOSION_EXPAND_RATE = 100.0;             // Range expansion speed (pixels/sec)
+// Explosion strength range (interpolated based on zoom)
+final float EXPLOSION_STRENGTH_MIN = 10.0;           // Strength at max zoom-in
+final float EXPLOSION_STRENGTH_MAX = 200.0;          // Strength at max zoom-out
+final float EXPLOSION_DECAY_TAU = 3.5;              // Repair decay time constant
+final float EXPLOSION_COMPLETE_THRESHOLD = 0.01;   // Repair completion threshold
+final float ZOOM_SPEED_EXPONENT = 1.1;                // Zoom-out speed boost exponent
+
+// Explosion state
+int explosionState = EXPLOSION_IDLE;
+
+// Explosion data (initialized in initExplosionArrays)
+PVector[] explosionVelocity;
+PVector[] explosionDisplacement;
+boolean[] isExploded;
+
+// Explosion info
+PVector explosionCenter;
+float explosionTime;
+float explosionRadius;
+
+// Initialize explosion arrays (call after generatePrimes)
+void initExplosionArrays() {
+  explosionVelocity = new PVector[primes.length];
+  explosionDisplacement = new PVector[primes.length];
+  isExploded = new boolean[primes.length];
+
+  for (int i = 0; i < primes.length; i++) {
+    explosionVelocity[i] = new PVector(0, 0);
+    explosionDisplacement[i] = new PVector(0, 0);
+    isExploded[i] = false;
+  }
+
+  explosionCenter = new PVector(0, 0);
+  explosionTime = 0;
+  explosionRadius = 0;
+}
+
+// Start explosion at given screen position
+void startExplosion(float x, float y) {
+  explosionState = EXPLOSION_ACTIVE;
+  // Convert screen coordinates to world coordinates (accounting for zoom)
+  explosionCenter = new PVector(
+    (x - width/2) / currentZoom,
+    (y - height/2) / currentZoom
+  );
+  explosionTime = 0;
+  explosionRadius = 0;
+
+  // Reset exploded flags
+  for (int i = 0; i < isExploded.length; i++) {
+    isExploded[i] = false;
+  }
+}
+
+// Start explosion repair
+void startExplosionRepair() {
+  explosionState = EXPLOSION_REPAIRING;
+}
+
+// Reset explosion state
+void resetExplosion() {
+  explosionState = EXPLOSION_IDLE;
+  for (int i = 0; i < primes.length; i++) {
+    explosionVelocity[i].set(0, 0);
+    explosionDisplacement[i].set(0, 0);
+    isExploded[i] = false;
+  }
+  explosionTime = 0;
+  explosionRadius = 0;
+}
+
+// Update explosion state each frame
+void updateExplosion(float dt) {
+  if (explosionState == EXPLOSION_IDLE) {
+    return;
+  }
+
+  if (explosionState == EXPLOSION_ACTIVE) {
+    // Update time and radius (speed increases when zoomed out)
+    explosionTime += dt;
+    explosionRadius = explosionTime * EXPLOSION_EXPAND_RATE * pow(MAX_ZOOM / currentZoom, ZOOM_SPEED_EXPONENT);
+
+    // Update explosion center to mouse position (converted to world coordinates)
+    explosionCenter.set(
+      (mouseX - width/2) / currentZoom,
+      (mouseY - height/2) / currentZoom
+    );
+
+    // Process each point
+    for (int i = 0; i < primes.length; i++) {
+      if (isExploded[i]) {
+        // Already exploded: continue moving based on velocity
+        explosionDisplacement[i].add(PVector.mult(explosionVelocity[i], dt));
+      } else {
+        // Not yet exploded: check if within explosion radius
+        PVector basePos = calculateBasePosition(primes[i]);
+        float dist = PVector.dist(basePos, explosionCenter);
+
+        if (dist < explosionRadius && dist > 0) {
+          // Calculate dynamic strength based on zoom level
+          float dynamicStrength = map(currentZoom, MIN_ZOOM, MAX_ZOOM, EXPLOSION_STRENGTH_MAX, EXPLOSION_STRENGTH_MIN);
+
+          // Set radial velocity (outward from explosion center)
+          PVector direction = PVector.sub(basePos, explosionCenter);
+          direction.normalize();
+          direction.mult(dynamicStrength * (1.0 - dist / explosionRadius));
+          explosionVelocity[i] = direction;
+          isExploded[i] = true;
+        }
+      }
+    }
+  }
+
+  if (explosionState == EXPLOSION_REPAIRING) {
+    // Decay displacement and velocity
+    float decay = exp(-dt / EXPLOSION_DECAY_TAU);
+    boolean allComplete = true;
+
+    for (int i = 0; i < primes.length; i++) {
+      explosionDisplacement[i].mult(decay);
+      explosionVelocity[i].mult(decay);
+
+      if (explosionDisplacement[i].mag() > EXPLOSION_COMPLETE_THRESHOLD) {
+        allComplete = false;
+      }
+    }
+
+    // Return to IDLE when all displacements are near zero
+    if (allComplete) {
+      resetExplosion();
+    }
+  }
 }

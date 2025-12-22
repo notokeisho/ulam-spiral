@@ -27,6 +27,9 @@ void setup() {
   // Generate prime numbers
   generatePrimes(N);
 
+  // Initialize explosion arrays
+  initExplosionArrays();
+
   // Set spiral scale (rMax = half of width)
   setScale(width / 2, N);
 
@@ -50,6 +53,9 @@ void draw() {
 
   // Decay heat over time
   decayHeat(dt);
+
+  // Update explosion state
+  updateExplosion(dt);
 
   // Draw background (before translate)
   drawBackground();
@@ -76,6 +82,11 @@ void draw() {
     // Apply noise warp based on heat and mouse position
     PVector p = applyNoiseWarp(p1, screenPos.x, screenPos.y, mouseX, mouseY, heat);
 
+    // Apply explosion displacement
+    if (explosionState != EXPLOSION_IDLE) {
+      p.add(explosionDisplacement[i]);
+    }
+
     // Draw the point
     drawPoint(p);
   }
@@ -86,6 +97,11 @@ void draw() {
 // Handle mouse drag event
 void mouseDragged() {
   if (mouseButton == LEFT) {
+    // Disable left-click during explosion
+    if (explosionState != EXPLOSION_IDLE) {
+      return;
+    }
+
     // First drag: initialize previous mouse position
     if (isFirstDrag) {
       prevMouseX = mouseX;
@@ -109,6 +125,15 @@ void mousePressed() {
   if (mouseButton == CENTER) {
     addTwist();
   }
+  if (mouseButton == RIGHT) {
+    if (explosionState == EXPLOSION_IDLE) {
+      // Start explosion
+      startExplosion(mouseX, mouseY);
+    } else if (explosionState == EXPLOSION_ACTIVE) {
+      // Start repair
+      startExplosionRepair();
+    }
+  }
 }
 
 // Handle mouse wheel event
@@ -127,5 +152,6 @@ void keyPressed() {
     twistCount = 0;
     heat = 0.0;
     use3Blue1Brown = true;
+    resetExplosion();
   }
 }
