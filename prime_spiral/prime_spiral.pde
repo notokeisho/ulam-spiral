@@ -40,6 +40,40 @@ void setup() {
 
 // === Draw loop ===
 void draw() {
-  // Placeholder - will be implemented in Task 5.2
-  background(0);
+  // Calculate delta time
+  int currentMillis = millis();
+  dt = (currentMillis - lastMillis) / 1000.0;
+  lastMillis = currentMillis;
+
+  // Decay heat over time
+  decayHeat(dt);
+
+  // Draw background (before translate)
+  drawBackground();
+
+  // Set up coordinate system: origin at center
+  translate(width / 2, height / 2);
+
+  // Apply zoom
+  scale(currentZoom);
+
+  // Draw each prime number
+  for (int i = 0; i < primes.length; i++) {
+    int prime = primes[i];
+
+    // Calculate base position on spiral
+    PVector p0 = calculateBasePosition(prime);
+
+    // Apply twist transformation
+    PVector p1 = applyTwist(p0, twistCount);
+
+    // Convert to screen coordinates (for distance calculation)
+    PVector screenPos = worldToScreen(p1);
+
+    // Apply noise warp based on heat and mouse position
+    PVector p = applyNoiseWarp(p1, screenPos.x, screenPos.y, mouseX, mouseY, heat);
+
+    // Draw the point
+    drawPoint(p);
+  }
 }
