@@ -22,7 +22,8 @@ void drawPointWithGradient(PVector pos, float distFromCenter) {
   noStroke();
 
   // Calculate gradient ratio (0 = center, 1 = edge)
-  float ratio = constrain(distFromCenter / maxRadius, 0, 1);
+  // Using pow(0.5) to make gradient start earlier
+  float ratio = pow(constrain(distFromCenter / maxRadius, 0, 1), 0.5);
 
   // Interpolate color from center to edge
   float r = lerp(red(CENTER_COLOR), red(EDGE_COLOR), ratio);

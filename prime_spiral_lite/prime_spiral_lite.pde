@@ -44,8 +44,8 @@ void setup() {
   // Set spiral scale (rMax = half of width)
   setScale(width / 2, N);
 
-  // Set max radius for gradient effect
-  maxRadius = width / 2;
+  // Set max radius for gradient effect (smaller = faster gradient)
+  maxRadius = width / 4;
 
   // Note: prevMouseX/Y are not initialized here
   // They will be set on first drag using isFirstDrag flag
