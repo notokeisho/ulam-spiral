@@ -56,7 +56,7 @@ void decayHeat(float dt) {
 // Returns: new position with twist applied
 PVector applyTwist(PVector pos, int twistCount) {
   if (twistCount == 0) {
-    return pos.copy();
+    return pos.get();
   }
 
   float distance = pos.mag();  // Distance from center
@@ -80,7 +80,7 @@ PVector applyTwist(PVector pos, int twistCount) {
 PVector applyNoiseWarp(PVector pos, float screenX, float screenY,
                        float mX, float mY, float h) {
   if (h <= 0) {
-    return pos.copy();
+    return pos.get();
   }
 
   // Calculate distance from mouse in screen coordinates
