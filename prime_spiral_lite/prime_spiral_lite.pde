@@ -1,6 +1,17 @@
 // prime_spiral_lite.pde - Main entry point (Lite version)
 // Entry point for the Prime Spiral Lite application
 
+// === Controls ===
+// Mouse:
+//   Left drag  : Add heat (noise warp effect)
+//   Right click: Start explosion / Start repair
+//   Wheel      : Zoom in/out
+//
+// Keyboard:
+//   Space : Toggle spiral mode (Ulam / 3Blue1Brown)
+//   R     : Reset state (heat, explosion, spiral mode)
+//   F     : Toggle explosion speed (normal / fast)
+
 // === Global variables ===
 
 // Prime number array
