@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(gh pr create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git submodule:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "PreToolUse": [],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
+          },
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"入力を待っています！\" with title \"ulam-spiral\"'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Submarine.aiff"
+          },
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"タスクが完了しました\" with title \"ulam-spiral\"'"
+          }
+        ]
+      }
+    ]
+  }
+}

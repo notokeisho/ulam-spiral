@@ -1,6 +1,5 @@
-CLAUDE.md
-.claude/plan
-
 # local file
 .DS_Store
 prime_spiral.zip
+
+!.claude/settings.local.json
